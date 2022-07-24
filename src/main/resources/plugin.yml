@@ -1,0 +1,14 @@
+name: SmpCore
+version: '${project.version}'
+main: wtf.gacek.smpcore.SmpCore
+api-version: 1.19
+authors: [ GacekKosmatek ]
+permissions:
+  smpcore.reload:
+    default: op
+
+commands:
+  smpcore:
+    usage: "/smpcore"
+    description: "Main SMP Core command"
+    permission: smpcore.reload
