@@ -54,10 +54,11 @@ public final class SmpCore extends JavaPlugin {
                     Objective objective = scoreboard.registerNewObjective(Objects.requireNonNull(ChatColor.stripColor(scoreboardName)), "dummy", Utils.colorize(scoreboardName));
                     objective.setDisplaySlot(DisplaySlot.SIDEBAR);
                     ArrayList<String> scoreboardText = new ArrayList<>();
-                    scoreboardText.add("&a");
+                    scoreboardText.add(instance.getConfig().getString("divider"));
                     if (sotw != null) scoreboardText.add("&6SOTW in: " + sotw);
                     if (end != null) scoreboardText.add("&3End opens in: " + end);
                     scoreboardText.add("&b");
+                    scoreboardText.add(instance.getConfig().getString("divider") + "&r");
                     scoreboardText.add("&7&o" + instance.getConfig().getString("discord-link"));
                     Collections.reverse(scoreboardText);
                     if (ScoreboardCache.containsKey(player.getUniqueId()) && ScoreboardCache.get(player.getUniqueId()).equals(scoreboardText)) {
