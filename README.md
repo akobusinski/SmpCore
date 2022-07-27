@@ -7,6 +7,7 @@
 - Adds a scoreboard with a configurable scoreboard name and your discord server
 - Lets you freeze all players before start of the world
 - Lets you close the end until a certain date so players can't just beat the game in the first hour
+- Lets you disable PvP for new players
 
 ## How to compile?
 
