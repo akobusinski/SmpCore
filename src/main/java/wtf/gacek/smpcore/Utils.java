@@ -2,36 +2,24 @@ package wtf.gacek.smpcore;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
 public class Utils {
-    public static void colorize(CommandSender sender, String message) {
-        if (sender == null || message == null) return;
-        if (sender instanceof ConsoleCommandSender) {
-            sender.sendMessage(ChatColor.stripColor(colorize(message)));
-        } else {
-            sender.sendMessage(colorize(message));
-        }
+    public static void colorize(@NotNull CommandSender sender, @NotNull String message) {
+        sender.sendMessage(colorize(message));
     }
 
-    public static String colorize(String message) {
-        if (message == null) return "";
+    public static String colorize(@NotNull String message) {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
-    public static void debug(CommandSender sender, String message) {
-        if (sender == null || message == null) return;
-        if (sender instanceof ConsoleCommandSender) {
-            sender.sendMessage(ChatColor.stripColor(debug(message)));
-        } else {
-            sender.sendMessage(debug(message));
-        }
+    public static void debug(@NotNull CommandSender sender, @NotNull String message) {
+        sender.sendMessage(debug(message));
     }
 
-    public static String debug(String message) {
-        if (message == null) return "";
+    public static String debug(@NotNull String message) {
         return colorize("&7[&3DEBUG&7] " + message);
     }
 

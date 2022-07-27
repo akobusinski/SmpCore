@@ -6,9 +6,15 @@ authors: [ GacekKosmatek ]
 permissions:
   smpcore.reload:
     default: op
+  smpcore.pvpenable:
+      default: true
 
 commands:
   smpcore:
     usage: "/smpcore"
     description: "Main SMP Core command"
     permission: smpcore.reload
+  pvp:
+    usage: "/pvp enable"
+    description: "Disables your pvp protection"
+    permission: smpcore.pvpenable

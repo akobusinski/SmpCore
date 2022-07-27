@@ -1,31 +1,28 @@
 package wtf.gacek.smpcore;
 
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
+import wtf.gacek.smpcore.commands.pvp;
 import wtf.gacek.smpcore.commands.smpcore;
+import wtf.gacek.smpcore.completers.PvPTabCompleter;
+import wtf.gacek.smpcore.completers.SmpTabCompleter;
+import wtf.gacek.smpcore.listeners.PvPTimerListener;
 import wtf.gacek.smpcore.listeners.SOTWListener;
 import wtf.gacek.smpcore.listeners.PortalListener;
+import wtf.gacek.smpcore.tasks.pvpTimer;
+import wtf.gacek.smpcore.tasks.scoreboardUpdater;
+import wtf.gacek.smpcore.tasks.sotwTimer;
 
-import java.io.File;
+import java.io.*;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public final class SmpCore extends JavaPlugin {
     private static SmpCore instance;
-    private static final HashMap<UUID, ArrayList<String>> ScoreboardCache = new HashMap<>();
-    private BukkitTask scoreboardUpdater;
-    private BukkitTask sotwTimer;
+    public final HashMap<UUID, ArrayList<String>> ScoreboardCache = new HashMap<>();
+    public HashMap<UUID, Integer> pvpTimes = new HashMap<>();
+    private BukkitTask scoreboardUpdaterTask;
+    private BukkitTask sotwTimerTask;
+    private BukkitTask pvpTimerTask;
 
     @Override
     public void onEnable() {
@@ -34,70 +31,53 @@ public final class SmpCore extends JavaPlugin {
         if (!((new File(this.getDataFolder(), "config.yml")).exists())) {
             this.saveDefaultConfig();
         }
+        File f = new File(this.getDataFolder(), "pvptimers");
+        if (f.exists()) {
+            try {
+                FileInputStream inputStream = new FileInputStream(f);
+                ObjectInputStream objectInput = new ObjectInputStream(inputStream);
+                @SuppressWarnings("unchecked")
+                HashMap<UUID, Integer> loaded = (HashMap<UUID, Integer>) objectInput.readObject();
+                pvpTimes = loaded;
+                objectInput.close();
+                inputStream.close();
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
         Objects.requireNonNull(this.getCommand("smpcore")).setExecutor(new smpcore());
-        Objects.requireNonNull(this.getCommand("smpcore")).setTabCompleter(new TabCompleter());
+        Objects.requireNonNull(this.getCommand("smpcore")).setTabCompleter(new SmpTabCompleter());
+        Objects.requireNonNull(this.getCommand("pvp")).setExecutor(new pvp());
+        Objects.requireNonNull(this.getCommand("pvp")).setTabCompleter(new PvPTabCompleter());
         getServer().getPluginManager().registerEvents(new PortalListener(), this);
         getServer().getPluginManager().registerEvents(new SOTWListener(), this);
-        scoreboardUpdater = new BukkitRunnable() {
-            @Override
-            public void run() {
-                int current = (int) Math.floor(System.currentTimeMillis() / 1000d);
-                int sotw_diff = instance.getConfig().getInt("sotw-time") - current;
-                int end_diff = instance.getConfig().getInt("end-open") - current;
-                String sotw = Utils.convertDate(sotw_diff);
-                String end = Utils.convertDate(end_diff);
-                ScoreboardManager manager = Bukkit.getScoreboardManager();
-                assert manager != null;
-                for (Player player: Bukkit.getOnlinePlayers()) {
-                    Scoreboard scoreboard = manager.getNewScoreboard();
-                    String scoreboardName = instance.getConfig().getString("scoreboard-name");
-                    Objective objective = scoreboard.registerNewObjective(Objects.requireNonNull(ChatColor.stripColor(scoreboardName)), "dummy", Utils.colorize(scoreboardName));
-                    objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-                    ArrayList<String> scoreboardText = new ArrayList<>();
-                    scoreboardText.add(instance.getConfig().getString("divider"));
-                    if (sotw != null) scoreboardText.add("&6SOTW in: " + sotw);
-                    if (end != null) scoreboardText.add("&3End opens in: " + end);
-                    scoreboardText.add("&b");
-                    scoreboardText.add(instance.getConfig().getString("divider") + "&r");
-                    scoreboardText.add("&7&o" + instance.getConfig().getString("discord-link"));
-                    Collections.reverse(scoreboardText);
-                    if (ScoreboardCache.containsKey(player.getUniqueId()) && ScoreboardCache.get(player.getUniqueId()).equals(scoreboardText)) {
-                        continue;
-                    }
-                    ScoreboardCache.put(player.getUniqueId(), scoreboardText);
-                    AtomicInteger i = new AtomicInteger();
-                    scoreboardText.forEach((val) -> {
-                        objective.getScore(Utils.colorize(val)).setScore(i.get());
-                        i.getAndIncrement();
-                    });
-                    player.setScoreboard(scoreboard);
-                }
-            }
-        }.runTaskTimer(this, 0, 0);
-        sotwTimer = new BukkitRunnable() {
-            @Override
-            public void run() {
-                int current = (int) Math.floor(System.currentTimeMillis() / 1000d);
-                int time = instance.getConfig().getInt("sotw-time");
-                if (current > time) {
-                    return;
-                }
-                int diff = time - current;
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new ComponentBuilder("The server is opening " + Utils.dateToText(diff)).color(net.md_5.bungee.api.ChatColor.RED).create());
-                }
-            }
-        }.runTaskTimer(this, 0, 20);
+        getServer().getPluginManager().registerEvents(new PvPTimerListener(), this);
+        scoreboardUpdaterTask = new scoreboardUpdater().runTaskTimer(this, 0, 0);
+        sotwTimerTask = new sotwTimer().runTaskTimer(this, 0, 10);
+        pvpTimerTask = new pvpTimer().runTaskTimer(this, 0, 20);
         instance.getLogger().info("Loaded!");
     }
 
     @Override
     public void onDisable() {
-        if (scoreboardUpdater != null && !scoreboardUpdater.isCancelled()) {
-            scoreboardUpdater.cancel();
+        if (scoreboardUpdaterTask != null && !scoreboardUpdaterTask.isCancelled()) {
+            scoreboardUpdaterTask.cancel();
         }
-        if (sotwTimer != null && !sotwTimer.isCancelled()) {
-            sotwTimer.cancel();
+        if (sotwTimerTask != null && !sotwTimerTask.isCancelled()) {
+            sotwTimerTask.cancel();
+        }
+        if (pvpTimerTask != null && !pvpTimerTask.isCancelled()) {
+            pvpTimerTask.cancel();
+        }
+        File f = new File(this.getDataFolder(), "pvptimers");
+        try {
+            FileOutputStream outputStream = new FileOutputStream(f);
+            ObjectOutputStream objectOutput = new ObjectOutputStream(outputStream);
+            objectOutput.writeObject(pvpTimes);
+            objectOutput.close();
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

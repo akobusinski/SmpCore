@@ -11,12 +11,11 @@ public class smpcore implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (args.length == 0) {
-            Utils.colorize(sender, "&cSmpCore 1.2");
+            Utils.colorize(sender, "&cSmpCore " + SmpCore.getInstance().getDescription().getVersion());
             Utils.colorize(sender, "&cCreated by GacekKosmatek");
             Utils.colorize(sender, "");
-            if (sender.hasPermission("smpcore.reload")) {
+            if (sender.hasPermission("smpcore.reload"))
                 Utils.colorize(sender, " - &c/smpcore reload - Reloads the config");
-            }
             return true;
         }
         if ("reload".equals(args[0])) {
