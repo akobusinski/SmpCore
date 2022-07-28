@@ -46,13 +46,11 @@ public class scoreboardUpdater extends BukkitRunnable {
             if (globalTexts.size() != 0 || playerTexts.size() != 0) {
                 scoreboardText.add("&b");
             }
-            if (globalTexts.size() != 0) {
-                scoreboardText.addAll(globalTexts);
+            scoreboardText.addAll(globalTexts);
+            scoreboardText.addAll(playerTexts);
+            if (scoreboardText.size() != 0) {
+                scoreboardText.add("&f");
             }
-            if (playerTexts.size() != 0) {
-                scoreboardText.addAll(playerTexts);
-            }
-            scoreboardText.add("&f");
             scoreboardText.add("&7&o" + instance.getConfig().getString("discord-link"));
             Collections.reverse(scoreboardText);
             if (instance.ScoreboardCache.containsKey(player.getUniqueId()) && instance.ScoreboardCache.get(player.getUniqueId()).equals(scoreboardText)) {
