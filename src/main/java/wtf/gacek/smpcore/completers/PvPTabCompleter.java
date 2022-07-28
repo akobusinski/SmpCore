@@ -12,8 +12,9 @@ public class PvPTabCompleter implements TabCompleter {
     @Nullable
     public ArrayList<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         ArrayList<String> completion = new ArrayList<>();
-        if (args.length == 1)
+        if (args.length == 1) {
             completion.add("enable");
+        }
         return completion;
     }
 }

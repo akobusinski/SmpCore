@@ -1,6 +1,8 @@
 package wtf.gacek.smpcore.listeners;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -21,15 +23,17 @@ public class PvPTimerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public static void onEntityDamage(EntityDamageByEntityEvent e) {
         SmpCore instance = SmpCore.getInstance();
-        if (e.getDamager() instanceof org.bukkit.entity.Player && instance.pvpTimes.containsKey(e.getDamager().getUniqueId()) && e.getEntity() instanceof org.bukkit.entity.Player) {
+        Entity damager = e.getDamager();
+        Entity entity = e.getEntity();
+        if (damager instanceof Player && entity instanceof Player && instance.pvpTimes.containsKey(damager.getUniqueId())) {
             e.setCancelled(true);
-            Utils.colorize(e.getDamager(), "&cYou cannot damage this player due to your PvP timer being on");
-            Utils.colorize(e.getDamager(), "&cYou can disable your PvP timer with &6/pvp enable");
+            Utils.colorize(damager, "&cYou cannot damage this player due to your PvP timer being on");
+            Utils.colorize(damager, "&cYou can disable your PvP timer with &6/pvp enable");
             return;
         }
-        if (e.getEntity() instanceof org.bukkit.entity.Player && instance.pvpTimes.containsKey(e.getEntity().getUniqueId()) && e.getDamager() instanceof org.bukkit.entity.Player) {
+        if (entity instanceof Player && damager instanceof Player && instance.pvpTimes.containsKey(entity.getUniqueId())) {
             e.setCancelled(true);
-            Utils.colorize(e.getDamager(), "&cThis player cannot be hurt due to their PvP timer being on");
+            Utils.colorize(damager, "&cThis player cannot be hurt due to their PvP timer being on");
         }
     }
 }

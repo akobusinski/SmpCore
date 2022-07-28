@@ -14,8 +14,9 @@ public class smpcore implements CommandExecutor {
             Utils.colorize(sender, "&cSmpCore " + SmpCore.getInstance().getDescription().getVersion());
             Utils.colorize(sender, "&cCreated by GacekKosmatek");
             Utils.colorize(sender, "");
-            if (sender.hasPermission("smpcore.reload"))
+            if (sender.hasPermission("smpcore.reload")) {
                 Utils.colorize(sender, " - &c/smpcore reload - Reloads the config");
+            }
             return true;
         }
         if ("reload".equals(args[0])) {
