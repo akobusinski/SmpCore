@@ -1,5 +1,6 @@
-sotw-time: 1234567890
-end-open: 1234567890
-pvp-timer: 3600
+sotw-time: 1234567890 # Unix Timestamp
+end-open: 1234567890 # Unix Timestamp
+pvp-timer: 3600 # In seconds
 scoreboard-name: "&6Scoreboard Name"
 discord-link: "discord.gg/your-invite"
+combat-tag: 15 # In seconds

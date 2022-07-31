@@ -51,4 +51,13 @@ public class Utils {
         seconds -= minutes * 60;
         return "in " + (days != 0 ? days + " days " : "") + (hours != 0 ? hours + " hours " : "") + (minutes != 0 ? minutes + " minutes " : "") + (seconds != 0 ? seconds + " seconds " : "");
     }
+
+
+    public static String stringRepeat(String s, int n) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 1; i <= n; i++) {
+            builder.append(s);
+        }
+        return builder.toString();
+    }
 }

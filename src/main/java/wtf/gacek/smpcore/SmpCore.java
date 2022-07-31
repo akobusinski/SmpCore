@@ -6,9 +6,11 @@ import wtf.gacek.smpcore.commands.pvp;
 import wtf.gacek.smpcore.commands.smpcore;
 import wtf.gacek.smpcore.completers.PvPTabCompleter;
 import wtf.gacek.smpcore.completers.SmpTabCompleter;
+import wtf.gacek.smpcore.listeners.CombatListener;
 import wtf.gacek.smpcore.listeners.PvPTimerListener;
 import wtf.gacek.smpcore.listeners.SOTWListener;
 import wtf.gacek.smpcore.listeners.PortalListener;
+import wtf.gacek.smpcore.tasks.combatTimer;
 import wtf.gacek.smpcore.tasks.pvpTimer;
 import wtf.gacek.smpcore.tasks.scoreboardUpdater;
 import wtf.gacek.smpcore.tasks.sotwTimer;
@@ -19,10 +21,12 @@ import java.util.*;
 public final class SmpCore extends JavaPlugin {
     private static SmpCore instance;
     public final HashMap<UUID, ArrayList<String>> ScoreboardCache = new HashMap<>();
+    public final HashMap<UUID, Integer> combatMap = new HashMap<>();
     public HashMap<UUID, Integer> pvpTimes = new HashMap<>();
     private BukkitTask scoreboardUpdaterTask;
     private BukkitTask sotwTimerTask;
     private BukkitTask pvpTimerTask;
+    private BukkitTask combatTimerTask;
 
     @Override
     public void onEnable() {
@@ -52,9 +56,11 @@ public final class SmpCore extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PortalListener(), this);
         getServer().getPluginManager().registerEvents(new SOTWListener(), this);
         getServer().getPluginManager().registerEvents(new PvPTimerListener(), this);
+        getServer().getPluginManager().registerEvents(new CombatListener(), this);
         scoreboardUpdaterTask = new scoreboardUpdater().runTaskTimer(this, 0, 0);
         sotwTimerTask = new sotwTimer().runTaskTimer(this, 0, 10);
         pvpTimerTask = new pvpTimer().runTaskTimer(this, 0, 20);
+        combatTimerTask = new combatTimer().runTaskTimer(this, 0, 0);
         instance.getLogger().info("Loaded!");
     }
 
@@ -68,6 +74,9 @@ public final class SmpCore extends JavaPlugin {
         }
         if (pvpTimerTask != null && !pvpTimerTask.isCancelled()) {
             pvpTimerTask.cancel();
+        }
+        if (combatTimerTask != null && !combatTimerTask.isCancelled()) {
+            combatTimerTask.cancel();
         }
         File f = new File(this.getDataFolder(), "pvptimers");
         try {
