@@ -20,7 +20,7 @@ public class PvPTimerListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public static void onEntityDamage(EntityDamageByEntityEvent e) {
         SmpCore instance = SmpCore.getInstance();
         Entity damager = e.getDamager();
