@@ -4,3 +4,5 @@ pvp-timer: 3600 # In seconds
 scoreboard-name: "&6Scoreboard Name"
 discord-link: "discord.gg/your-invite"
 combat-tag: 15 # In seconds
+blocked-commands: # A list of commands
+#  - "/home"
