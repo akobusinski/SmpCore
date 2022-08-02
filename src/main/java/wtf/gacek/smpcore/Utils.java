@@ -35,7 +35,13 @@ public class Utils {
         seconds -= hours * 3600;
         int minutes = Math.floorDiv(seconds, 60);
         seconds -= minutes * 60;
-        return (days != 0 ? (days < 10 ? "0" : "") + days + ":" : "") + (hours != 0 ? (hours < 10 ? "0" : "") + hours + ":" : "") + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+        boolean showDays = false;
+        boolean showHours = hours != 0;
+        if (days != 0) {
+            showDays = true;
+            showHours = true;
+        }
+        return (showDays ? (days < 10 ? "0" : "") + days + ":" : "") + (showHours ? (hours < 10 ? "0" : "") + hours + ":" : "") + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
     }
 
     public static String dateToText(int diff) {
