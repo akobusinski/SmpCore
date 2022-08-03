@@ -56,9 +56,9 @@ public final class SmpCore extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new CombatListener(), this);
         getServer().getPluginManager().registerEvents(new ScoreboardListener(), this);
         scoreboardUpdaterTask = new scoreboardUpdater().runTaskTimer(this, 0, 0);
-        sotwTimerTask = new sotwTimer().runTaskTimer(this, 0, 10);
-        pvpTimerTask = new pvpTimer().runTaskTimer(this, 0, 20);
-        combatTimerTask = new combatTimer().runTaskTimer(this, 0, 0);
+        sotwTimerTask = new sotwTimer().runTaskTimerAsynchronously(this, 0, 10);
+        pvpTimerTask = new pvpTimer().runTaskTimerAsynchronously(this, 0, 20);
+        combatTimerTask = new combatTimer().runTaskTimerAsynchronously(this, 0, 0);
         instance.getLogger().info("Loaded!");
     }
 
