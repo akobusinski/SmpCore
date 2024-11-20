@@ -25,7 +25,7 @@ dependencies {
 }
 
 group = "wtf.gacek"
-version = "1.3.4"
+version = "1.3.5"
 description = "SmpCore"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
