@@ -57,7 +57,6 @@ public class CombatListener implements Listener {
         if (blocked == null || blocked.isEmpty()) {
             return;
         }
-        instance.getLogger().info(e.getMessage());
         if (blocked.contains(e.getMessage().split(" ")[0])) {
             e.setCancelled(true);
             Utils.colorize(p, "&cYou cannot use " + e.getMessage().split(" ")[0] +" in PvP!");
