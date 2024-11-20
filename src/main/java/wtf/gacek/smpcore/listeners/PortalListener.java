@@ -1,26 +1,40 @@
 package wtf.gacek.smpcore.listeners;
 
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import wtf.gacek.smpcore.SmpCore;
 import wtf.gacek.smpcore.Utils;
 
 import java.util.Objects;
 
 public class PortalListener implements Listener {
+    private static final String END_CLOSED_MESSAGE = "&cThe end is currently closed!";
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public static void onPlayerTeleport(PlayerTeleportEvent e) {
+        if (shouldClose(Objects.requireNonNull(Objects.requireNonNull(e.getTo()).getWorld()).getEnvironment())) {
+            e.setCancelled(true);
+            Utils.colorize(e.getPlayer(), END_CLOSED_MESSAGE);
+        }
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public static void onPortalEnter(PlayerPortalEvent e) {
-        if (!Objects.requireNonNull(Objects.requireNonNull(e.getTo()).getWorld()).getEnvironment().equals(World.Environment.THE_END)) {
-            return;
+        if (shouldClose(Objects.requireNonNull(Objects.requireNonNull(e.getTo()).getWorld()).getEnvironment())) {
+            e.setCancelled(true);
+            Utils.colorize(e.getPlayer(), END_CLOSED_MESSAGE);
         }
-        if (!((int) Math.floor(System.currentTimeMillis() / 1000d) < SmpCore.getInstance().getConfig().getInt("end-open"))) {
-            return;
+    }
+
+    private static boolean shouldClose(World.Environment environment) {
+        if (!environment.equals(World.Environment.THE_END)) {
+            return false;
         }
-        e.setCancelled(true);
-        Utils.colorize(e.getPlayer(), "&cThe end is currently closed!");
+
+        return (int) Math.floor(System.currentTimeMillis() / 1000d) < SmpCore.getInstance().getConfig().getInt("end-open");
     }
 }
