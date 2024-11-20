@@ -14,12 +14,13 @@ import wtf.gacek.smpcore.tasks.sotwTimer;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class SmpCore extends JavaPlugin {
     private static SmpCore instance;
     public final HashMap<UUID, ArrayList<String>> ScoreboardCache = new HashMap<>();
-    public final HashMap<UUID, Integer> combatMap = new HashMap<>();
-    public HashMap<UUID, Integer> pvpTimes = new HashMap<>();
+    public final Map<UUID, Integer> combatMap = new ConcurrentHashMap<>();
+    public Map<UUID, Integer> pvpTimes = new ConcurrentHashMap<>();
     private BukkitTask scoreboardUpdaterTask;
     private BukkitTask sotwTimerTask;
     private BukkitTask pvpTimerTask;
