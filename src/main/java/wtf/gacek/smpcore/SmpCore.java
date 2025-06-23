@@ -39,7 +39,7 @@ public final class SmpCore extends JavaPlugin {
                 FileInputStream inputStream = new FileInputStream(f);
                 ObjectInputStream objectInput = new ObjectInputStream(inputStream);
                 @SuppressWarnings("unchecked")
-                HashMap<UUID, Integer> loaded = (HashMap<UUID, Integer>) objectInput.readObject();
+                Map<UUID, Integer> loaded = (Map<UUID, Integer>) objectInput.readObject();
                 pvpTimes = loaded;
                 objectInput.close();
                 inputStream.close();
