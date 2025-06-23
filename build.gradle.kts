@@ -2,6 +2,7 @@ plugins {
     `java-library`
     `maven-publish`
     id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("net.kyori.blossom") version "2.1.0"
 }
 
 repositories {
@@ -25,7 +26,7 @@ dependencies {
 }
 
 group = "wtf.gacek"
-version = "1.3.5"
+version = "1.3.6"
 description = "SmpCore"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
@@ -44,7 +45,7 @@ tasks.withType<Javadoc>() {
 }
 
 tasks.runServer {
-    minecraftVersion("1.21.1")
+    minecraftVersion("1.21.6")
 }
 
 tasks.withType(xyz.jpenilla.runtask.task.AbstractRun::class) {
@@ -53,4 +54,14 @@ tasks.withType(xyz.jpenilla.runtask.task.AbstractRun::class) {
         languageVersion = JavaLanguageVersion.of(21)
     }
     jvmArgs("-XX:+AllowEnhancedClassRedefinition")
+}
+
+sourceSets {
+    main {
+        blossom {
+            resources {
+                property("version", project.version.toString())
+            }
+        }
+    }
 }

@@ -1,5 +1,5 @@
 name: SmpCore
-version: '${project.version}'
+version: '{{ version }}'
 main: wtf.gacek.smpcore.SmpCore
 api-version: 1.19
 authors: [ GacekKosmatek ]
